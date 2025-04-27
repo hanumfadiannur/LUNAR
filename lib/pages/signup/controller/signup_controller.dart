@@ -32,30 +32,20 @@ class SignUpController extends GetxController {
     return null;
   }
 
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
-
   void submitForm(GlobalKey<FormState> formKey) async {
     if (formKey.currentState!.validate()) {
       try {
-        // Step 1: Register user with email & password
+        // Register user with email & password
         UserCredential userCredential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         );
 
-        // Step 2: Get UID
+        // Get UID
         String uid = userCredential.user!.uid;
 
-        // Step 3: Save additional data to Firestore
+        // Save additional data to Firestore
         await FirebaseFirestore.instance.collection('users').doc(uid).set({
           'fullname': nameController.text.trim(),
           'email': emailController.text.trim(),
@@ -65,7 +55,7 @@ class SignUpController extends GetxController {
           'lastPeriodEndDate': null,
         });
 
-        // Show success snackbar
+        // Nunjukin success snackbar
         Get.snackbar(
           'Success',
           'Registration successful!',
@@ -77,7 +67,7 @@ class SignUpController extends GetxController {
         );
 
         Get.offAllNamed(AppRoutes
-            .signin); // Redirect to sign-in page after successful registration
+            .signin); // Redirect ke page sign-in kalau berhasil
       } on FirebaseAuthException catch (e) {
         String errorMessage = 'Something went wrong';
         if (e.code == 'email-already-in-use') {
