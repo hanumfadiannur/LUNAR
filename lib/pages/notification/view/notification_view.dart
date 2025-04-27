@@ -71,11 +71,11 @@ class NotificationView extends StatelessWidget {
       case 'started':
         backgroundColor = Colors.pink[100]!;
         break;
-      case 'upcoming':
-        backgroundColor = const Color(0xFFFFCCCF);
-        break;
       case 'delayed':
         backgroundColor = Colors.red[100]!;
+        break;
+      case 'upcoming':
+        backgroundColor = const Color(0xFFFFCCCF);
         break;
       case 'finished':
         backgroundColor = Colors.green[100]!;
