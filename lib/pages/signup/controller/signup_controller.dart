@@ -27,7 +27,17 @@ class SignUpController extends GetxController {
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+(com|net|org|co\.id)$')
         .hasMatch(value)) {
-      return 'Please enter a valid email with .com or similar domain';
+      return 'Please enter a valid email domain';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
     }
     return null;
   }
