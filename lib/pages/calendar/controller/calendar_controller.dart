@@ -368,7 +368,7 @@ class CalendarController extends GetxController {
           await userRef.update({'cycleLength': newCycleLength});
           print('✅ Cycle length updated (no previous start).');
         } else {
-          // Hitung beda bulan
+          // Hitung beda bulan antara lastPeriodStartDate dan eventDate
           int monthDiff = (lastPeriodStartDate.year - eventDate.year) * 12 +
               (lastPeriodStartDate.month - eventDate.month);
 
