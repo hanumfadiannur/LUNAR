@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 class HistoryController extends GetxController {
   var startDate = ''.obs; // Menyimpan tanggal mulai siklus
   var periodLength = ''.obs; // Menyimpan panjang periode
-  var daysAgo = ''.obs; // Menyimpan selisih hari dari tanggal sekarang
+  var daysAgo = ''.obs; // Menyimpan jarak selisih hari dari tanggal sekarang
   var cycleHistory = <Map<String, dynamic>>[]
       .obs; // Menyimpan riwayat siklus dari seluruh bulan
   var fullname = ''.obs; // Menyimpan fullname pengguna
@@ -16,8 +16,8 @@ class HistoryController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchUserData(); // Memanggil fungsi untuk mengambil data penggun
-    fetchCycleHistory(); // Memanggil fungsi untuk mengambil data sejarah siklus
+    fetchUserData(); // Memanggil fungsi untuk mengambil data pengguna
+    fetchCycleHistory(); // Memanggil fungsi untuk mengambil data history siklus
   }
 
   void fetchUserData() async {
