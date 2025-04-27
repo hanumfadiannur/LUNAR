@@ -205,7 +205,7 @@ class _CalendarViewState extends State<CalendarView> {
                     final eventType = event['type'];
                     final eventNotes = event['notes'];
 
-                    // Declare variables without defaults
+                    // Deklrasi variabel
                     Color iconColor;
                     Color eventColor;
                     IconData icon;
@@ -229,7 +229,7 @@ class _CalendarViewState extends State<CalendarView> {
                       return Container(); // If the event type does not match, return an empty container.
                     }
 
-                    // Add shadow for all event types
+                    // Menambah shadow untuk semua tipe event
                     BoxShadow boxShadow = BoxShadow(
                       color: Colors.black.withOpacity(0.1),
                       spreadRadius: 1,
@@ -301,11 +301,11 @@ class _CalendarViewState extends State<CalendarView> {
 
                     final noteController = TextEditingController();
 
-                    // Ensure startDate is not null before using it
+                    // Memastikan startDate tidak null sebelum digunakan
                     if (localStartDate == null ||
                         selectedDate.isBefore(localStartDate) ||
                         selectedDate.isAtSameMomentAs(localStartDate)) {
-                      // If start date is not set or selected date is before start date, show the "Is this the Start?" bottom sheet
+                      // Jika start date tidak ditetapkan atau tanggal yang dipilih sebelum start date, tampilkan bottom sheet "Is this the Start?"
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
@@ -436,7 +436,7 @@ class _CalendarViewState extends State<CalendarView> {
                     } else if (selectedDate.isAfter(localStartDate) &&
                         selectedDate.month == localStartDate.month &&
                         selectedDate.year == localStartDate.year) {
-                      // If the selected date is after the start date, show the "Is this the End?" bottom sheet
+                      // Jika tanggal yang dipilih setelah start date, tampilkan bottom sheet "Is it the end?"
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
