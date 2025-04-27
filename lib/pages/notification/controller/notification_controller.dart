@@ -52,7 +52,7 @@ class NotificationController extends GetxController {
               today.isBefore(lastPeriodEndDate)) {
             notifications.add({
               'type': 'started',
-              'message': "Your period has started!🌟",
+              'message': "Your period has started, take care of your health!🌟",
               'timestamp': today,
               'additionalText':
                   "Day ${today.difference(lastPeriodStartDate).inDays + 2} of your cycle."
