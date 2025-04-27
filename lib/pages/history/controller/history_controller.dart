@@ -20,23 +20,6 @@ class HistoryController extends GetxController {
     fetchCycleHistory(); // Memanggil fungsi untuk mengambil data sejarah siklus
   }
 
-  void fetchUserData() async {
-    if (userId.isNotEmpty) {
-      try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .get();
-
-        if (userDoc.exists) {
-          fullname.value = userDoc['fullname'] ?? "User";
-        }
-      } catch (e) {
-        print("Error fetching user data: $e");
-      }
-    }
-  }
-
   // Fungsi untuk mengambil data siklus
   void fetchCycleHistory() async {
     try {
@@ -104,6 +87,23 @@ class HistoryController extends GetxController {
         "Failed to fetch cycle history: $e",
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+
+  void fetchUserData() async {
+    if (userId.isNotEmpty) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+
+        if (userDoc.exists) {
+          fullname.value = userDoc['fullname'] ?? "User";
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+      }
     }
   }
 }
