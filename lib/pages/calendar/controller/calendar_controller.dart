@@ -38,99 +38,91 @@ class CalendarController extends GetxController {
   }
 
   Future<int> updateCycleLength(DateTime currentStartDate) async {
-    int cycleLength = 27; // Default
+    int cycleLength = 27; // Default fallback
+    print("🔁 updateCycleLength() dipanggil untuk $currentStartDate");
 
-    DateTime now = DateTime.now();
-    int thisMonth = now.month;
-    int thisYear = now.year;
-
-    int oneMonthBefore = thisMonth - 1;
-    int oneMonthBeforeYear = thisYear;
-    if (oneMonthBefore == 0) {
-      oneMonthBefore = 12;
-      oneMonthBeforeYear -= 1;
+    // Coba cari bulan sebelumnya dari currentStartDate
+    int prevMonth = currentStartDate.month - 1;
+    int prevYear = currentStartDate.year;
+    if (prevMonth == 0) {
+      prevMonth = 12;
+      prevYear -= 1;
     }
 
-    // Kalau currentStartDate adalah bulan sebelum bulan sekarang
-    if (currentStartDate.month == oneMonthBefore &&
-        currentStartDate.year == oneMonthBeforeYear) {
-      final thisMonthStr = thisMonth.toString().padLeft(2, '0');
-      var currentPeriodDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .collection('periods')
-          .doc(thisYear.toString())
-          .collection(thisMonthStr)
-          .doc('active')
-          .get();
+    final prevMonthStr = prevMonth.toString().padLeft(2, '0');
 
-      if (currentPeriodDoc.exists) {
-        var startDate = currentPeriodDoc.data()?['start_date']?.toDate();
-        if (startDate != null) {
-          cycleLength = startDate.difference(currentStartDate).inDays;
-        }
-      }
+    var prevPeriodDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection('periods')
+        .doc(prevYear.toString())
+        .collection(prevMonthStr)
+        .doc('active')
+        .get();
+
+    DateTime? prevStartDate;
+    if (prevPeriodDoc.exists) {
+      prevStartDate = prevPeriodDoc.data()?['start_date']?.toDate();
+      print("📌 Found prevStartDate in Firestore: $prevStartDate");
+    }
+
+    if (prevStartDate != null) {
+      cycleLength = currentStartDate.difference(prevStartDate).inDays;
+      print("✅ Cycle length dihitung dari bulan sebelumnya: $cycleLength hari");
     } else {
-      // Logika sebelumnya: cek bulan sebelumnya, lalu bulan sesudahnya kalau gagal
-      int prevYear = currentStartDate.year;
-      int prevMonth = currentStartDate.month - 1;
-      if (prevMonth == 0) {
-        prevMonth = 12;
-        prevYear -= 1;
+      // Fallback: cari bulan setelahnya
+      int nextMonth = currentStartDate.month + 1;
+      int nextYear = currentStartDate.year;
+      if (nextMonth == 13) {
+        nextMonth = 1;
+        nextYear += 1;
       }
-      final prevMonthStr = prevMonth.toString().padLeft(2, '0');
 
-      var prevPeriodDoc = await FirebaseFirestore.instance
+      final nextMonthStr = nextMonth.toString().padLeft(2, '0');
+
+      var nextPeriodDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .collection('periods')
-          .doc(prevYear.toString())
-          .collection(prevMonthStr)
+          .doc(nextYear.toString())
+          .collection(nextMonthStr)
           .doc('active')
           .get();
 
-      DateTime? prevStartDate;
-      if (prevPeriodDoc.exists) {
-        prevStartDate = prevPeriodDoc.data()?['start_date']?.toDate();
+      DateTime? nextStartDate;
+      if (nextPeriodDoc.exists) {
+        nextStartDate = nextPeriodDoc.data()?['start_date']?.toDate();
+        print("📌 Found nextStartDate in Firestore: $nextStartDate");
       }
 
-      if (prevStartDate != null) {
-        cycleLength = currentStartDate.difference(prevStartDate).inDays;
+      if (nextStartDate != null) {
+        cycleLength = nextStartDate.difference(currentStartDate).inDays;
+        print(
+            "✅ Cycle length dihitung dari bulan setelahnya: $cycleLength hari");
       } else {
-        // Coba bulan setelahnya
-        int nextYear = currentStartDate.year;
-        int nextMonth = currentStartDate.month + 1;
-        if (nextMonth == 13) {
-          nextMonth = 1;
-          nextYear += 1;
-        }
-
-        final nextMonthStr = nextMonth.toString().padLeft(2, '0');
-        var nextPeriodDoc = await FirebaseFirestore.instance
+        // Fallback terakhir: ambil dari user.lastPeriodStartDate
+        var userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
-            .collection('periods')
-            .doc(nextYear.toString())
-            .collection(nextMonthStr)
-            .doc('active')
             .get();
 
-        DateTime? nextStartDate;
-        if (nextPeriodDoc.exists) {
-          nextStartDate = nextPeriodDoc.data()?['start_date']?.toDate();
-        }
-
-        if (nextStartDate != null) {
-          cycleLength = nextStartDate.difference(currentStartDate).inDays;
+        if (userDoc.exists) {
+          final lastStartDate =
+              userDoc.data()?['lastPeriodStartDate']?.toDate();
+          if (lastStartDate != null &&
+              currentStartDate.isAfter(lastStartDate)) {
+            cycleLength = currentStartDate.difference(lastStartDate).inDays;
+            print(
+                "⚠️ Fallback: dihitung dari lastPeriodStartDate = $lastStartDate → $cycleLength hari");
+          } else {
+            print(
+                "⚠️ Tidak ditemukan data sebelumnya. Gunakan default 27 hari");
+          }
         }
       }
     }
 
-    print("🟢 DEBUG updateCycleLength");
-    print("Start Date sekarang: $currentStartDate");
-    print("Cycle Length dihitung: $cycleLength hari");
-    print("🛑 END DEBUG updateCycleLength");
-
+    print("🟢 Selesai updateCycleLength → cycleLength: $cycleLength hari");
     return cycleLength;
   }
 

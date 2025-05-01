@@ -148,6 +148,12 @@ class HomeController extends GetxController {
               .isAfter(lastPeriodStartDate.add(Duration(days: cycleLength)))) {
             currentCycleMessage.value = "Your period is finished.";
             currentCycleStatus.value = "End of cycle.";
+          } else {
+            // Jika periode belum dimulai
+            final daysLeft = predictedStartDate.difference(today).inDays + 1;
+            currentCycleMessage.value = "Upcoming period in $daysLeft days 🌟";
+            currentCycleStatus.value =
+                "Your next period is expected to start on, $formattedPredictedStartDate";
           }
         } else {
           // Jika tidak ada lastPeriodStartDate, tampilkan pesan bahwa data siklus belum tersedia
